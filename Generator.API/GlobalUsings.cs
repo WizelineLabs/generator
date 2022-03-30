@@ -1,0 +1,1 @@
+global using Reusable.CRUD.Contract;
