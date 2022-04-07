@@ -9,6 +9,11 @@ ConfigurationManager configuration = builder.Configuration;
 
 builder.Services.AddControllers();
 builder.Services.AddDbContext<GeneratorContext>();
+
+using(var ctx = new GeneratorContext(configuration))
+{
+    ctx.Database.Migrate();
+}
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

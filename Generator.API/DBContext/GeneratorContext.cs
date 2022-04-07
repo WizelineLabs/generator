@@ -11,10 +11,10 @@ public class GeneratorContext: DbContext
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            var connString = configuration["ConnectionStrings:Default"];
-            optionsBuilder.UseNpgsql(connString);
-                    
-        }
+    {
+        var connString = configuration["ConnectionStrings:Default"];
+        optionsBuilder.UseNpgsql(connString);
+                
+    }
     public DbSet<Application>? Applications { get; set; }
 }

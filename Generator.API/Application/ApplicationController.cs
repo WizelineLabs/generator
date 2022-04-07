@@ -31,7 +31,7 @@ public class ApplicationController : ControllerBase
         return Ok();
     }
 
-    [HttpPut, Route("/Application")]
+    [HttpPost, Route("/Application")]
     public IActionResult InsertApplication(InsertApplication request)
     {
         var entity = request;
