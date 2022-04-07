@@ -1,5 +1,6 @@
 namespace Reusable.CRUD.Implementations.EF;
 
+using Microsoft.EntityFrameworkCore;
 using Reusable.CRUD.Contract;
 using Reusable.Rest;
 using ServiceStack;
@@ -12,6 +13,9 @@ using System.Threading.Tasks;
 
 public class WriteLogic<Entity> : ReadOnlyLogic<Entity>, ILogicWrite<Entity>, ILogicWriteAsync<Entity> where Entity : class, IEntity, new()
 {
+    public WriteLogic(DbContext DbContext) : base(DbContext)
+    {
+    }
     #region HOOKS
     virtual protected Entity OnCreateInstance(Entity entity) { return entity; }
     virtual protected void OnAfterSaving(Entity entity, OPERATION_MODE mode = OPERATION_MODE.NONE) { }

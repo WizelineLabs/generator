@@ -1,5 +1,6 @@
 namespace Reusable.CRUD.Implementations.EF;
 
+using Microsoft.EntityFrameworkCore;
 using Reusable.CRUD.Contract;
 using Reusable.Rest;
 using ServiceStack.Text;
@@ -8,6 +9,11 @@ using System.Reflection;
 public abstract class ReadOnlyLogic<Entity> : BaseLogic, ILogicReadOnly<Entity>, ILogicReadOnlyAsync<Entity> where Entity : class, IEntity, new()
 {
     protected static Entity EntityInfo = new Entity();
+
+    protected ReadOnlyLogic(DbContext DbContext) : base(DbContext)
+    {
+    }
+
     protected static string CACHE_GET_ALL(object? entityInfo = null) => "_GET_ALL_" + (entityInfo == null ? typeof(Entity).Name : entityInfo.GetType().Name);
     protected static string CACHE_GET_BY_ID(object? entityInfo = null) => "_GET_BY_ID_" + (entityInfo == null ? typeof(Entity).Name : entityInfo.GetType().Name) + "_";
     protected static string CACHE_GET_PAGED(object? entityInfo = null) => "_QUERY_" + (entityInfo == null ? typeof(Entity).Name : entityInfo.GetType().Name) + "_";
@@ -119,8 +125,8 @@ public abstract class ReadOnlyLogic<Entity> : BaseLogic, ILogicReadOnly<Entity>,
 
         // if (entity != null) AdapterOut(entity);
 
-        if (Log.IsDebugEnabled)
-            Log.Info($"SQL. Get By Id: [{id}] of Type: [{EntityInfo.EntityName}] by User: [{Auth?.UserName}].");
+        // if (Log.IsDebugEnabled)
+        //     Log.Info($"SQL. Get By Id: [{id}] of Type: [{EntityInfo.EntityName}] by User: [{Auth?.UserName}].");
 
         // var response = entity;
         // if (!CacheDisabled) Cache?.Set(cacheKey, response);
