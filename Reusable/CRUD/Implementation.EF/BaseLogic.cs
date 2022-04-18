@@ -3,6 +3,7 @@ namespace Reusable.CRUD.Implementations.EF;
 using Reusable.EmailServices;
 using Reusable.Utils;
 using Reusable.Contract;
+using Microsoft.EntityFrameworkCore;
 
 public abstract class BaseLogic : Contract.ILogic
 {
@@ -13,6 +14,13 @@ public abstract class BaseLogic : Contract.ILogic
     public static ICacheClient? Cache { get; set; }
     public IAuthSession? Auth { get; set; }
     public static ILog Log;
+    public DbContext DbContext { get; set; }
+
+    protected BaseLogic(DbContext DbContext)
+    {
+        this.DbContext = DbContext;
+    }
+
     // public IRequest Request { get; set; }
     // public IDbConnection Db { get; set; }
     // public Service? Service { get; set; }

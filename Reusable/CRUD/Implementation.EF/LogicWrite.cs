@@ -1,5 +1,6 @@
 namespace Reusable.CRUD.Implementations.EF;
 
+using Microsoft.EntityFrameworkCore;
 using Reusable.CRUD.Contract;
 using Reusable.Rest;
 using ServiceStack;
@@ -12,6 +13,9 @@ using System.Threading.Tasks;
 
 public class WriteLogic<Entity> : ReadOnlyLogic<Entity>, ILogicWrite<Entity>, ILogicWriteAsync<Entity> where Entity : class, IEntity, new()
 {
+    public WriteLogic(DbContext DbContext) : base(DbContext)
+    {
+    }
     #region HOOKS
     virtual protected Entity OnCreateInstance(Entity entity) { return entity; }
     virtual protected void OnAfterSaving(Entity entity, OPERATION_MODE mode = OPERATION_MODE.NONE) { }
@@ -38,14 +42,14 @@ public class WriteLogic<Entity> : ReadOnlyLogic<Entity>, ILogicWrite<Entity>, IL
             track.CreatedAt = DateTimeOffset.Now;
             track.CreatedBy = Auth?.UserName;
         }
-        // entity.Id = Db.Insert(entity, selectIdentity: true);
+        DbContext.Add(entity);
 
         OnAfterSaving(entity, OPERATION_MODE.ADD);
 
         CacheOnAdd(entity);
 
-        if (Log.IsDebugEnabled)
-            Log.Info($"Inserted Entity [{entity.Id}] of Type: [{entity.EntityName}] by User: [{Auth?.UserName}]");
+        // if (Log.IsDebugEnabled)
+        //     Log.Info($"Inserted Entity [{entity.Id}] of Type: [{entity.EntityName}] by User: [{Auth?.UserName}]");
 
         return entity;
     }
@@ -194,8 +198,8 @@ public class WriteLogic<Entity> : ReadOnlyLogic<Entity>, ILogicWrite<Entity>, IL
     {
         if (CacheDisabled) return;
 
-        if (Log.IsDebugEnabled)
-            Log.Info($"Cache on Add of Type: [{entity}] by User: [{Auth?.UserName}]");
+        // if (Log.IsDebugEnabled)
+        //     Log.Info($"Cache on Add of Type: [{entity}] by User: [{Auth?.UserName}]");
 
         // if (entity is BaseDocument document)
         //     document.RowVersion = (Db.SingleById<Entity>(entity.Id) as BaseDocument)!.RowVersion;
