@@ -1,6 +1,7 @@
 using Generator.API.Application;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Reusable.Utils;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +19,7 @@ using(var ctx = new GeneratorContext(configuration))
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<ApplicationLogic>(); 
+builder.Services.AddScoped<Log<ApplicationLogic>>(); 
 var app = builder.Build();
 
 

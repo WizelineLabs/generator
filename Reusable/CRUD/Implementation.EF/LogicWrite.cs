@@ -1,6 +1,8 @@
 namespace Reusable.CRUD.Implementations.EF;
 
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Reusable.Contract;
 using Reusable.CRUD.Contract;
 using Reusable.Rest;
 using ServiceStack;
@@ -13,7 +15,7 @@ using System.Threading.Tasks;
 
 public class WriteLogic<Entity> : ReadOnlyLogic<Entity>, ILogicWrite<Entity>, ILogicWriteAsync<Entity> where Entity : class, IEntity, new()
 {
-    public WriteLogic(DbContext DbContext) : base(DbContext)
+    public WriteLogic(DbContext DbContext, ILog logger) : base(DbContext, logger)
     {
     }
     #region HOOKS
@@ -46,10 +48,10 @@ public class WriteLogic<Entity> : ReadOnlyLogic<Entity>, ILogicWrite<Entity>, IL
 
         OnAfterSaving(entity, OPERATION_MODE.ADD);
 
-        CacheOnAdd(entity);
+        //CacheOnAdd(entity);
 
-        // if (Log.IsDebugEnabled)
-        //     Log.Info($"Inserted Entity [{entity.Id}] of Type: [{entity.EntityName}] by User: [{Auth?.UserName}]");
+        if (Log.IsDebugEnabled)
+            Log.Info($"Inserted Entity [{entity.Id}] of Type: [{entity.EntityName}] by User: [{Auth?.UserName}]");
 
         return entity;
     }
@@ -285,18 +287,18 @@ public class WriteLogic<Entity> : ReadOnlyLogic<Entity>, ILogicWrite<Entity>, IL
 
     public static void FlushServiceCache(params long[] ids)
     {
-        if (Log.IsDebugEnabled)
-            Log.Info($"Flush Service Cache: [{typeof(Entity).Name}]");
+        // if (Log.IsDebugEnabled)
+        //     Log.Info($"Flush Service Cache: [{typeof(Entity).Name}]");
 
-        if (ids.Length > 0)
-            foreach (var id in ids)
-                Cache!.Remove(CACHE_GET_BY_ID() + id);
-        else
-            Cache!.RemoveAll(Cache.GetKeysStartingWith(CACHE_GET_BY_ID()));
+        // if (ids.Length > 0)
+        //     foreach (var id in ids)
+        //         Cache!.Remove(CACHE_GET_BY_ID() + id);
+        // else
+        //     Cache!.RemoveAll(Cache.GetKeysStartingWith(CACHE_GET_BY_ID()));
 
-        Cache!.Remove(CACHE_GET_ALL());
-        Cache.RemoveAll(Cache.GetKeysStartingWith(CACHE_GET_PAGED()));
-        Cache.RemoveAll(Cache.GetKeysStartingWith(CACHE_CUSTOM()));
+        // Cache!.Remove(CACHE_GET_ALL());
+        // Cache.RemoveAll(Cache.GetKeysStartingWith(CACHE_GET_PAGED()));
+        // Cache.RemoveAll(Cache.GetKeysStartingWith(CACHE_CUSTOM()));
     }
     #endregion
 }
