@@ -45,6 +45,7 @@ public class WriteLogic<Entity> : ReadOnlyLogic<Entity>, ILogicWrite<Entity>, IL
             track.CreatedBy = Auth?.UserName;
         }
         DbContext.Add(entity);
+        DbContext.SaveChanges();
 
         OnAfterSaving(entity, OPERATION_MODE.ADD);
 
@@ -84,7 +85,9 @@ public class WriteLogic<Entity> : ReadOnlyLogic<Entity>, ILogicWrite<Entity>, IL
             track.UpdatedAt = DateTimeOffset.Now;
             track.UpdatedBy = Auth?.UserName;
         }
-        // Db.Update(entity);
+
+        DbContext.Entry(entity).State = EntityState.Modified;
+        DbContext.SaveChanges();
 
         OnAfterSaving(entity, OPERATION_MODE.UPDATE);
 

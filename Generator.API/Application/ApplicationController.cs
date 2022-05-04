@@ -27,8 +27,8 @@ public class ApplicationController : ControllerBase
     [HttpGet, Route("/Application/")]
     public IActionResult GetAllApplications()
     {
-        //return WithDb(db => Logic.GetAll());
-        return Ok();
+        var entities = _logic.GetAll();
+        return Ok(entities);
     }
 
     [HttpPost, Route("/Application")]
@@ -36,11 +36,24 @@ public class ApplicationController : ControllerBase
     {
         var entity = request;
         _logic.Add(entity);
-            // return InTransaction(db =>
-            // {
-            //     Logic.Add(entity);
-            //     return new CommonResponse(Logic.GetById(entity.Id));
-            // });
-        return Ok( _logic.GetById(entity.Id));
+        // return InTransaction(db =>
+        // {
+        //     Logic.Add(entity);
+        //     return new CommonResponse(Logic.GetById(entity.Id));
+        // });
+        return Ok(_logic.GetById(entity.Id));
+    }
+
+    [HttpPut, Route("/Application/{Id}")]
+    public IActionResult UpdateApplication([FromBody] UpdateApplication request)
+    {
+        var entity = request;
+        _logic.Update(entity);
+        // return InTransaction(db =>
+        // {
+        //     Logic.Add(entity);
+        //     return new CommonResponse(Logic.GetById(entity.Id));
+        // });
+        return Ok(_logic.GetById(entity.Id));
     }
 }
