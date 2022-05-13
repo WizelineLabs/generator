@@ -91,7 +91,7 @@ public class WriteLogic<Entity> : ReadOnlyLogic<Entity>, ILogicWrite<Entity>, IL
 
         OnAfterSaving(entity, OPERATION_MODE.UPDATE);
 
-        CacheOnUpdate(entity);
+        //CacheOnUpdate(entity);
 
         if (Log.IsDebugEnabled)
             Log.Info($"Updated Entity [{entity.Id}] of Type: [{entity.EntityName}] by User: [{Auth?.UserName}]");
@@ -152,9 +152,10 @@ public class WriteLogic<Entity> : ReadOnlyLogic<Entity>, ILogicWrite<Entity>, IL
         }
         else
         {
-            // Db.Delete(entity);
+            DbContext.Entry(entity).State = EntityState.Deleted;
+            DbContext.SaveChanges();
         }
-        CacheOnDelete(entity);
+        //CacheOnDelete(entity);
 
         if (Log.IsDebugEnabled)
             Log.Info($"Removed Entity by Object [{entity.Id}] of Type: [{entity.EntityName}] by User: [{Auth?.UserName}]");

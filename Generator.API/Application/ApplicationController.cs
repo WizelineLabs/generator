@@ -20,7 +20,6 @@ public class ApplicationController : ControllerBase
     public IActionResult GetApplicationById(long Id)
     {
         var application = _logic.GetById(Id);
-        //return WithDb(db => Logic.GetById(request.Id));
         return Ok(application);
     }
 
@@ -36,11 +35,7 @@ public class ApplicationController : ControllerBase
     {
         var entity = request;
         _logic.Add(entity);
-        // return InTransaction(db =>
-        // {
-        //     Logic.Add(entity);
-        //     return new CommonResponse(Logic.GetById(entity.Id));
-        // });
+      
         return Ok(_logic.GetById(entity.Id));
     }
 
@@ -49,11 +44,14 @@ public class ApplicationController : ControllerBase
     {
         var entity = request;
         _logic.Update(entity);
-        // return InTransaction(db =>
-        // {
-        //     Logic.Add(entity);
-        //     return new CommonResponse(Logic.GetById(entity.Id));
-        // });
+       
         return Ok(_logic.GetById(entity.Id));
+    }
+    [HttpDelete, Route("/Application/{id}")]
+    public IActionResult DeleteApplication(long id)
+    {
+        _logic.RemoveById(id);
+       
+        return Ok();
     }
 }
