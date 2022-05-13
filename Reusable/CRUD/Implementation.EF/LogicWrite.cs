@@ -15,7 +15,9 @@ using System.Threading.Tasks;
 
 public class WriteLogic<Entity> : ReadOnlyLogic<Entity>, ILogicWrite<Entity>, ILogicWriteAsync<Entity> where Entity : class, IEntity, new()
 {
-    public WriteLogic(DbContext DbContext, ILog logger) : base(DbContext, logger)
+    private readonly IConfiguration Configuration;
+
+    public WriteLogic(DbContext DbContext, ILog logger, IConfiguration configuration) : base(DbContext, logger, configuration)
     {
     }
     #region HOOKS

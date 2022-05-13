@@ -7,6 +7,7 @@ namespace Generator.API.Application
         public string? Name { get; set; }
         public string? GeneratorCommit { get; set; }
         public long? GeneratorId { get; set; }
+        public MainDefinition? Definition { get; set; }
     }
 
     public class InsertApplication : Application { }

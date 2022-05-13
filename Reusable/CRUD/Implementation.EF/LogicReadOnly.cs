@@ -12,8 +12,9 @@ public abstract class ReadOnlyLogic<Entity> : BaseLogic, ILogicReadOnly<Entity>,
 {
     protected static Entity EntityInfo = new Entity();
     protected DbSet<Entity> DbSet { get; set; }
+    private readonly IConfiguration Configuration;
 
-    protected ReadOnlyLogic(DbContext DbContext, ILog logger) : base(DbContext, logger)
+    protected ReadOnlyLogic(DbContext DbContext, ILog logger, IConfiguration configuration) : base(DbContext, logger, configuration)
     {
         DbSet = DbContext.Set<Entity>();
     }
