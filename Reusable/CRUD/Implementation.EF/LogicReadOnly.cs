@@ -126,7 +126,7 @@ public abstract class ReadOnlyLogic<Entity> : BaseLogic, ILogicReadOnly<Entity>,
 
         var entity = DbSet.FirstOrDefault(e => e.Id == id);
 
-        // if (entity != null) AdapterOut(entity);
+        if (entity != null) AdapterOut(entity);
 
         if (Log.IsDebugEnabled)
             Log.Info($"SQL. Get By Id: [{id}] of Type: [{EntityInfo.EntityName}] by User: [{Auth?.UserName}].");

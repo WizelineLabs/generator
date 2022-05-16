@@ -50,7 +50,7 @@ public class ApplicationController : ControllerBase
     [HttpDelete, Route("/Application/{id}")]
     public IActionResult DeleteApplication(long id)
     {
-        _logic.RemoveById(id);
+       _logic.RemoveById(id);
        
         return Ok();
     }
