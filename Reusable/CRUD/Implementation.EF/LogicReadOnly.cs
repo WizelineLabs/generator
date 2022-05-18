@@ -11,9 +11,12 @@ using Reusable.Contract;
 public abstract class ReadOnlyLogic<Entity> : BaseLogic, ILogicReadOnly<Entity>, ILogicReadOnlyAsync<Entity> where Entity : class, IEntity, new()
 {
     protected static Entity EntityInfo = new Entity();
+    protected DbSet<Entity> DbSet { get; set; }
+    private readonly IConfiguration Configuration;
 
-    protected ReadOnlyLogic(DbContext DbContext, ILog logger) : base(DbContext, logger)
+    protected ReadOnlyLogic(DbContext DbContext, ILog logger, IConfiguration configuration) : base(DbContext, logger, configuration)
     {
+        DbSet = DbContext.Set<Entity>();
     }
 
     protected static string CACHE_GET_ALL(object? entityInfo = null) => "_GET_ALL_" + (entityInfo == null ? typeof(Entity).Name : entityInfo.GetType().Name);
@@ -75,15 +78,13 @@ public abstract class ReadOnlyLogic<Entity> : BaseLogic, ILogicReadOnly<Entity>,
             return cache;
         }
 
-        // var query = Db.From<Entity>();
-        // var entities = Db.LoadSelect(query);
+        var entities = DbSet.ToList();
 
         if (Log.IsDebugEnabled)
             Log.Info($"SQL. Get All of Type: [{EntityInfo.EntityName}] by User: [{Auth?.UserName}].");
 
         // if (!CacheDisabled) Cache?.Set(CACHE_GET_ALL(), entities);
-        // return entities;
-        return new List<Entity>(); // TODO: return entries from db
+        return entities;
     }
 
     virtual public async Task<List<Entity>> GetAllAsync()
@@ -97,15 +98,13 @@ public abstract class ReadOnlyLogic<Entity> : BaseLogic, ILogicReadOnly<Entity>,
             return cache;
         }
 
-        // var query = Db.From<Entity>();
-        // var entities = await Db.LoadSelectAsync(query);
+        var entities = await DbSet.ToListAsync();
 
         if (Log.IsDebugEnabled)
             Log.Info($"SQL. Get All Async of Type: [{EntityInfo.EntityName}] by User: [{Auth?.UserName}]");
 
         // if (!CacheDisabled) Cache?.Set(CACHE_GET_ALL(), entities);
-        // return entities;
-        return new List<Entity>(); // TODO: return entries from db
+        return entities;
     }
 
     virtual public Entity? GetById(long id)
@@ -125,15 +124,16 @@ public abstract class ReadOnlyLogic<Entity> : BaseLogic, ILogicReadOnly<Entity>,
 
         // var entity = Db.LoadSelect(query).FirstOrDefault();
 
-        // if (entity != null) AdapterOut(entity);
+        var entity = DbSet.FirstOrDefault(e => e.Id == id);
 
-        // if (Log.IsDebugEnabled)
-        //     Log.Info($"SQL. Get By Id: [{id}] of Type: [{EntityInfo.EntityName}] by User: [{Auth?.UserName}].");
+        if (entity != null) AdapterOut(entity);
 
-        // var response = entity;
+        if (Log.IsDebugEnabled)
+            Log.Info($"SQL. Get By Id: [{id}] of Type: [{EntityInfo.EntityName}] by User: [{Auth?.UserName}].");
+
+        var response = entity;
         // if (!CacheDisabled) Cache?.Set(cacheKey, response);
-        // return response;
-        return new Entity(); // TODO: return entity from db
+        return response;
     }
 
     virtual public async Task<Entity?> GetByIdAsync(long id)
@@ -148,20 +148,16 @@ public abstract class ReadOnlyLogic<Entity> : BaseLogic, ILogicReadOnly<Entity>,
             return AdapterOut(cache)[0];
         }
 
-        // var query = OnGetSingle(Db.From<Entity>())
-        //         .Where(e => e.Id == id);
-
-        // var entity = (await Db.LoadSelectAsync(query)).FirstOrDefault();
+        var entity = await DbSet.FirstOrDefaultAsync(e => e.Id == id);
 
         // if (entity != null) AdapterOut(entity);
 
         if (Log.IsDebugEnabled)
             Log.Info($"SQL. Get By Id Async: [{id}] of Type: [{EntityInfo.EntityName}] by User: [{Auth?.UserName}].");
 
-        // var response = entity;
+        var response = entity;
         // if (!CacheDisabled) Cache?.Set(cacheKey, response);
-        // return response;
-        return new Entity(); // TODO: return entity from db
+        return response;
     }
 
     private (bool, string, CommonResponse?, SqlExpression<Entity>) TryGetPagedFromCache(int perPage, int page, string generalFilter, SqlExpression<Entity>? query, string? cacheKey, bool requiresKeysInJsons, bool useOnGetList)

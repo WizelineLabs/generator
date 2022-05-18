@@ -1,6 +1,6 @@
 ﻿namespace Generator.Definition;
 
-public class MainDefinnition : HasYAML
+public class MainDefinition : HasYAML
 {
     public string? ProjectName { get; set; }
     public string? Description { get; set; }

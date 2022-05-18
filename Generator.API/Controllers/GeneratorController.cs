@@ -13,6 +13,12 @@ public class GeneratorController : ControllerBase
         _logger = logger;
     }
 
+    [HttpGet, Route("/Generator/ClearCache")]
+    public IActionResult ClearCache()
+    {
+        return Ok();
+    }
+
     [HttpPost, Route("/Generator/RunApplication/{ApplicationName}")]
     public IActionResult RunApplication(string ApplicationName, bool Force)
     {

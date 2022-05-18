@@ -11,4 +11,10 @@ public static class Extensions
             DisplayName = str
         };
     }
+
+    public static string CombineWith(this String str,params string [] paths)
+    {
+        return Path.Combine(paths.Prepend(str).ToArray());
+    }
+    
 }

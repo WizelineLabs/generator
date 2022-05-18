@@ -9,20 +9,22 @@ using Microsoft.Extensions.Logging;
 public abstract class BaseLogic : Contract.ILogic
 {
     public static IAppSettings? AppSettings { get; set; }
+    private readonly IConfiguration Configuration;
     public IEmailService? EmailService { get; set; }
     public bool CacheDisabled { get; set; }
     public static TimeSpan CacheExpiresIn = new TimeSpan(12, 0, 0);
     public static ICacheClient? Cache { get; set; }
     public IAuthSession? Auth { get; set; }
     public ILog Log;
-    public  Log<BaseLogic> Logger;
+    public Log<BaseLogic> Logger;
     public DbContext DbContext { get; set; }
 
-    protected BaseLogic(DbContext DbContext, ILog logger)
+    protected BaseLogic(DbContext DbContext, ILog logger, IConfiguration configuration)
     {
         this.DbContext = DbContext;
         // Log = new Log<BaseLogic>(logger);
         Log = logger;
+        Configuration = configuration;
     }
 
     // public IRequest Request { get; set; }

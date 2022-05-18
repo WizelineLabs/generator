@@ -15,7 +15,9 @@ using System.Threading.Tasks;
 
 public class WriteLogic<Entity> : ReadOnlyLogic<Entity>, ILogicWrite<Entity>, ILogicWriteAsync<Entity> where Entity : class, IEntity, new()
 {
-    public WriteLogic(DbContext DbContext, ILog logger) : base(DbContext, logger)
+    private readonly IConfiguration Configuration;
+
+    public WriteLogic(DbContext DbContext, ILog logger, IConfiguration configuration) : base(DbContext, logger, configuration)
     {
     }
     #region HOOKS
@@ -45,6 +47,7 @@ public class WriteLogic<Entity> : ReadOnlyLogic<Entity>, ILogicWrite<Entity>, IL
             track.CreatedBy = Auth?.UserName;
         }
         DbContext.Add(entity);
+        DbContext.SaveChanges();
 
         OnAfterSaving(entity, OPERATION_MODE.ADD);
 
@@ -84,11 +87,13 @@ public class WriteLogic<Entity> : ReadOnlyLogic<Entity>, ILogicWrite<Entity>, IL
             track.UpdatedAt = DateTimeOffset.Now;
             track.UpdatedBy = Auth?.UserName;
         }
-        // Db.Update(entity);
+
+        DbContext.Entry(entity).State = EntityState.Modified;
+        DbContext.SaveChanges();
 
         OnAfterSaving(entity, OPERATION_MODE.UPDATE);
 
-        CacheOnUpdate(entity);
+        //CacheOnUpdate(entity);
 
         if (Log.IsDebugEnabled)
             Log.Info($"Updated Entity [{entity.Id}] of Type: [{entity.EntityName}] by User: [{Auth?.UserName}]");
@@ -149,9 +154,10 @@ public class WriteLogic<Entity> : ReadOnlyLogic<Entity>, ILogicWrite<Entity>, IL
         }
         else
         {
-            // Db.Delete(entity);
+            DbContext.Entry(entity).State = EntityState.Deleted;
+            DbContext.SaveChanges();
         }
-        CacheOnDelete(entity);
+        //CacheOnDelete(entity);
 
         if (Log.IsDebugEnabled)
             Log.Info($"Removed Entity by Object [{entity.Id}] of Type: [{entity.EntityName}] by User: [{Auth?.UserName}]");
