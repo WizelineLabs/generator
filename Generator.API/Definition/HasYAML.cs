@@ -5,5 +5,5 @@ using System.Runtime.Serialization;
 public abstract class HasYAML
 {
     [IgnoreDataMember]
-    public string? yaml { get; set; }
+    internal string? yaml { get; set; }
 }

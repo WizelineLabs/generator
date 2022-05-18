@@ -12,9 +12,9 @@ public static class Extensions
         };
     }
 
-
-    public static string CombineWith(this String str, string path)
-    {        
-        return Path.Combine(str, path);
+    public static string CombineWith(this String str,params string [] paths)
+    {
+        return Path.Combine(paths.Prepend(str).ToArray());
     }
+    
 }
