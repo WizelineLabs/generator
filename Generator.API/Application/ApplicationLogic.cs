@@ -164,6 +164,43 @@ public class ApplicationLogic : WriteLogic<Application>, ILogicWriteAsync<Applic
         return GetById(app.Id)!;
     }
 
+    public MainDefinition GetMainDefinition(string appName)
+        => GetApp(appName).Definition!;
+
+    public List<ComponentDefinition> GetComponentsInApplication(string appName)    
+        => GetApp(appName).Definition!.Components!;
+    
+    public List<EntityDefinition> GetEntitiesInApplication(string appName)          
+        => GetApp(appName).Definition!.Entities!;
+    
+    public List<GatewayDefinition> GetGatewaysInApplication(string appName) 
+        => GetApp(appName).Definition!.Gateways!;
+    
+    public List<FrontendDefinition> GetFrontendsInApplication(string appName) 
+        => GetApp(appName).Definition!.Frontends!;
+    
+    public Dictionary<string, string> GetPagesInApplicationAndFrontend(string appName, string frontendName)
+    {
+        var app = GetApp(appName);
+
+        var frontend = app.Definition!.Frontends!.FirstOrDefault(f => f.Name!.ToLower() == frontendName.ToLower().Trim());
+        if (frontend == null)
+            throw new KnownError($"Frontend [{frontendName}] does not exist.");
+
+        return frontend.Pages!;
+    }
+
+    private Application GetApp(string appName)
+    {
+        var app = GetAll().FirstOrDefault(a => a.Name!.ToLower() == appName.ToLower().Trim());
+        if (app == null)
+            throw new KnownError($"Application [{appName}] does not exist.");
+
+        AdapterOut(app);
+
+        return app;
+    }
+
     private Application CreateItem<T>(T item, string name, string folder, string application, string entity = "")
     {
         Log.Info($"Create {item!.GetType().Name} : [{name}] for Application: [{application}]");
