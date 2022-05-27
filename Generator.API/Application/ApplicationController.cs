@@ -225,9 +225,96 @@ public class ApplicationController : ControllerBase
         catch (Exception ex)
         {
             return BadRequest(ex);
-        }
-        
-        
+        }                
     }
 
+    [HttpGet, Route("/Application/GetMainDefinition/{appName}")]
+    public IActionResult GetMainDefinition(string appName)
+    {
+        try
+        {
+            var application = _logic.GetMainDefinition(appName);
+            return Ok(application);
+        }
+        catch (KnownError e)
+        {
+            return StatusCode(500, e.Message);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex);
+        }
+    }
+
+    [HttpGet, Route("/Application/GetComponentsInApplication/{appName}")]
+    public IActionResult GetComponentsInApplication(string appName)
+    {
+        try
+        {
+            var application = _logic.GetComponentsInApplication(appName);
+            return Ok(application);
+        }
+        catch (KnownError e)
+        {
+            return StatusCode(500, e.Message);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex);
+        }
+    }
+
+    [HttpGet, Route("/Application/GetEntitiesInApplication/{appName}")]
+    public IActionResult GetEntitiesInApplication(string appName)
+    {
+        try
+        {
+            var application = _logic.GetEntitiesInApplication(appName);
+            return Ok(application);
+        }
+        catch (KnownError e)
+        {
+            return StatusCode(500, e.Message);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex);
+        }
+    }
+
+    [HttpGet, Route("/Application/GetFrontendsInApplication/{appName}")]
+    public IActionResult GetFrontendsInApplication(string appName)
+    {
+        try
+        {
+            var application = _logic.GetFrontendsInApplication(appName);
+            return Ok(application);
+        }
+        catch (KnownError e)
+        {
+            return StatusCode(500, e.Message);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex);
+        }
+    }
+
+    [HttpGet, Route("/Application/GetPagesInApplicationAndFrontend/{appName}/{frontendName}")]
+    public IActionResult GetPagesInApplicationAndFrontend(string appName, string frontendName)
+    {
+        try
+        {
+            var application = _logic.GetPagesInApplicationAndFrontend(appName, frontendName);
+            return Ok(application);
+        }
+        catch (KnownError e)
+        {
+            return StatusCode(500, e.Message);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex);
+        }
+    }
 }
