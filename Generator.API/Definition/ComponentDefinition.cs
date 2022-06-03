@@ -2,7 +2,7 @@
 
 public class ComponentDefinition : HasYAML
 {
-    public string? Name { get; set; }
+    public string Name { get; set; } = null!;
     public string? Type { get; set; }
     public string? Entity { get; set; }
     public List<object> Layout = new List<object>();

@@ -2,7 +2,7 @@
 
 public class EntityDefinition : HasYAML
 {
-    public string? Name { get; set; }
+    public string Name { get; set; } = null!;
     public string? Type { get; set; }
     public string? Table { get; set; }
     public Dictionary<string, string>? Fields { get; set; }

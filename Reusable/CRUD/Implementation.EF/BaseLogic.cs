@@ -4,43 +4,28 @@ using Reusable.EmailServices;
 using Reusable.Utils;
 using Reusable.Contract;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 public abstract class BaseLogic : Contract.ILogic
 {
     public static IAppSettings? AppSettings { get; set; }
-    private readonly IConfiguration Configuration;
+    protected readonly IConfiguration Configuration;
     public IEmailService? EmailService { get; set; }
     public bool CacheDisabled { get; set; }
     public static TimeSpan CacheExpiresIn = new TimeSpan(12, 0, 0);
     public static ICacheClient? Cache { get; set; }
     public IAuthSession? Auth { get; set; }
-    public ILog Log;
-    public Log<BaseLogic> Logger;
+    public ILog Log = null!;
     public DbContext DbContext { get; set; }
 
     protected BaseLogic(DbContext DbContext, ILog logger, IConfiguration configuration)
     {
         this.DbContext = DbContext;
-        // Log = new Log<BaseLogic>(logger);
         Log = logger;
         Configuration = configuration;
+        CacheDisabled = configuration.GetValue<bool>("CACHE_DISABLED", true) == true;
     }
-
-    // public IRequest Request { get; set; }
-    // public IDbConnection Db { get; set; }
-    // public Service? Service { get; set; }
 
     public virtual string ToMD5(object from) => MD5HashGenerator.GenerateKey(from);
-
-    public virtual void Init(IDbConnection db, Service service)
-    {
-        CacheDisabled = AppSettings!.Get<bool>("cacheDisabled") == true;
-        // Db = db;
-        // Auth = service.GetSession();
-        // Request = service.Request;
-        // Service = service;
-    }
 
     public bool HasRoles(params string[] roles)
     {

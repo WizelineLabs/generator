@@ -5,14 +5,13 @@ using Reusable.CRUD.Contract;
 using Reusable.Rest;
 using ServiceStack.Text;
 using System.Reflection;
-using Microsoft.Extensions.Logging;
 using Reusable.Contract;
+using Reusable.Utils;
 
 public abstract class ReadOnlyLogic<Entity> : BaseLogic, ILogicReadOnly<Entity>, ILogicReadOnlyAsync<Entity> where Entity : class, IEntity, new()
 {
     protected static Entity EntityInfo = new Entity();
     protected DbSet<Entity> DbSet { get; set; }
-    private readonly IConfiguration Configuration;
 
     protected ReadOnlyLogic(DbContext DbContext, ILog logger, IConfiguration configuration) : base(DbContext, logger, configuration)
     {
