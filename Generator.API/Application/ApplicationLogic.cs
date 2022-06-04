@@ -216,7 +216,7 @@ public class ApplicationLogic : WriteLogic<Application>, ILogicWriteAsync<Applic
         var fileInfo = new FileInfo(path);
 
         if (fileInfo.Exists)
-            throw new KnownError("Error. file already exists.");
+            throw new KnownError("Error. File already exists.");
 
         if (!fileInfo.Directory!.Exists)
             fileInfo.Directory.Create();

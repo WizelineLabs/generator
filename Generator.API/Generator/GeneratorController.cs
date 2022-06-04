@@ -39,7 +39,7 @@ public class GeneratorController : ControllerBase
     }
 
     [HttpPost, Route("/Generator/RunWorkspace")]
-    public IActionResult RunWorkspace([FromBody] string ApplicationName, bool Force)
+    public IActionResult RunWorkspace(string ApplicationName, bool Force)
     {
         return Ok(ApplicationName);
     }
@@ -51,13 +51,13 @@ public class GeneratorController : ControllerBase
     }
 
     [HttpPost, Route("/Generator/RunBackend")]
-    public IActionResult RunBackend([FromBody] string ApplicationName, bool Force)
+    public IActionResult RunBackend(string ApplicationName, bool Force)
     {
         return Ok(ApplicationName);
     }
 
-    [HttpPost, Route("/Generator/RunFrontends")]
-    public IActionResult RunFrontends([FromBody] string ApplicationName, bool Force)
+    [HttpPost, Route("/Generator/RunFrontends/{ApplicationName}")]
+    public IActionResult RunFrontends(string ApplicationName, bool Force)
     {
         try
         {
