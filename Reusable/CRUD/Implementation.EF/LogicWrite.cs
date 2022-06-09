@@ -1,12 +1,10 @@
 namespace Reusable.CRUD.Implementations.EF;
 
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using Reusable.Contract;
 using Reusable.CRUD.Contract;
 using Reusable.Rest;
 using ServiceStack;
-using ServiceStack.OrmLite;
 using ServiceStack.Text;
 using System;
 using System.Collections.Generic;
@@ -15,8 +13,6 @@ using System.Threading.Tasks;
 
 public class WriteLogic<Entity> : ReadOnlyLogic<Entity>, ILogicWrite<Entity>, ILogicWriteAsync<Entity> where Entity : class, IEntity, new()
 {
-    private readonly IConfiguration Configuration;
-
     public WriteLogic(DbContext DbContext, ILog logger, IConfiguration configuration) : base(DbContext, logger, configuration)
     {
     }

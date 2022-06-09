@@ -27,12 +27,10 @@ public class Log<T> : ILog
     public void Error(object message, Exception exception)
     {
         Logger.LogError(exception, message.ToString());
-
     }
     public void Fatal(object message)
     {
          Logger.LogCritical(message.ToString());
-
     }
     public void Fatal(object message, Exception exception)
     {

@@ -7,6 +7,6 @@ public interface ILogic
 {
     // IRequest Request { get; set; } ServiceStack Request
     // IDbConnection Db { get; set; }
-    void Init(IDbConnection db, Service service);
+    // void Init(IDbConnection db, Service service);
     IEmailService? EmailService { get; set; }
 }

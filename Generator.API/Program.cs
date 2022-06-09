@@ -1,7 +1,3 @@
-using Generator.API.Application;
-using Microsoft.EntityFrameworkCore;
-using Reusable.Utils;
-
 var builder = WebApplication.CreateBuilder(args);
 
 ConfigurationManager configuration = builder.Configuration;
@@ -22,11 +18,21 @@ using (var ctx = new GeneratorContext(configuration))
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+#region Utils
+builder.Services.AddScoped<ILog, Log<Generator.API.Generator>>();
+#endregion
+
+#region Logic
 builder.Services.AddScoped<ApplicationLogic>();
-builder.Services.AddScoped<Log<ApplicationLogic>>();
+builder.Services.AddScoped<GeneratorLogic>();
+#endregion
+
+#region Generators
+builder.Services.AddScoped<FrontendGenerator>();
+#endregion
+
 var app = builder.Build();
-
-
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

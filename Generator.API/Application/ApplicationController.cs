@@ -1,9 +1,6 @@
-using Generator.API.Application;
 using Microsoft.AspNetCore.Mvc;
-using Reusable.Rest;
-using Reusable.Rest.Implementations.SS;
 
-namespace Generator.API.Controllers;
+namespace Generator.API;
 
 [ApiController]
 [Route("[controller]")]
@@ -62,7 +59,7 @@ public class ApplicationController : ControllerBase
         try
         {
             var entity = request;
-            _logic.Add(entity);            
+            _logic.Add(entity);
             return Ok(_logic.GetById(entity.Id));
         }
         catch (KnownError e)
@@ -220,12 +217,12 @@ public class ApplicationController : ControllerBase
         }
         catch (KnownError e)
         {
-            return StatusCode(500,e.Message);            
+            return StatusCode(500, e.Message);
         }
         catch (Exception ex)
         {
             return BadRequest(ex);
-        }                
+        }
     }
 
     [HttpGet, Route("/Application/GetMainDefinition/{appName}")]
