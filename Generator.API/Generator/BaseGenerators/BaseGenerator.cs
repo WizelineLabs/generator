@@ -51,7 +51,7 @@ public abstract class BaseGenerator : BaseLogic, IGenerator
 
         if (!new string[] { ".cs", ".tsx", ".nowignore", ".json", ".js", ".dockerignore", ".gitignore", ".yml", ".ts", ".scss", ".sass", ".html" }.Contains(f.Extension))
         {
-            f.CopyTo(toPath);
+            f.CopyTo(toPath,true);
             return;
         }
 

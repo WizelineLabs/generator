@@ -87,6 +87,6 @@ public class FrontendGenerator : CopyGenerator
 
     public override List<Archive> GetFiles(string path, string basePath, string fileType, string projectName, string? frontendName = "", bool? ignoreCache = false)
     {
-        return base.GetFiles(path, basePath, fileType, projectName, Frontend.Name, ignoreCache);
+        return base.GetFiles(path, basePath, fileType, projectName, Frontend?.Name, ignoreCache);
     }
 }
