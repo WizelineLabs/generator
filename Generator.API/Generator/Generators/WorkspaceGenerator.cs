@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using Generator.API.BaseGenerators;
+﻿using Generator.API.BaseGenerators;
 using ServiceStack;
 
 
@@ -12,15 +11,14 @@ namespace Generator.API.Generators
         }
 
         public override string GeneratorName => "Workspace";
-        public override string SOURCE_DIRECTORY { get; set; } = "";
-        public override string TARGET_DIRECTORY { get; set; } = "";
+
         public void Setup(Application app)
         {
             Application = app;
             MainDefinition = app.Definition;
 
             SOURCE_DIRECTORY = Configuration.GetValue<string>("WORKSPACES_TEMPLATES_DIR");
-            TARGET_DIRECTORY = APPLICATIONS_DIRECTORY.CombineWith(app.Name,"app");
+            TARGET_DIRECTORY = APPLICATIONS_DIRECTORY.CombineWith(app.Name);
         }
 
         public override List<Archive> Run(bool force = false)
