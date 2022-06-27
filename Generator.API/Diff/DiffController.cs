@@ -59,7 +59,7 @@ public class DiffController : ControllerBase
     {
         try
         {
-            return Ok(_logic.CopyToLeft(request.File!, request.SelectedLine!));
+            return Ok(_logic.FeedbackGenerator(request.File!, request.SelectedLine!));
         }
         catch (KnownError e)
         {

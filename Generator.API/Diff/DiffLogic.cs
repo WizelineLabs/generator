@@ -176,14 +176,6 @@ public class DiffLogic : WriteLogic<Diff>, ILogicWriteAsync<Diff>
         return Diff(file);
     }
 
-    // ToDo: Create implementation
-    public Diff? CopyToLeft(Archive file, DiffLine selectedLine)
-    {
-        Log.Info($"Copy to Left: [{file.FileName}], selectedLine: [{selectedLine.Text}]");
-
-        return Diff(file);
-    }
-
     public Diff? FeedbackGenerator(Archive file, DiffLine selectedLine)
     {
         Log.Info($"Feedback Generator: [{file.FileName}], selectedLine: [{selectedLine.Text}]");
