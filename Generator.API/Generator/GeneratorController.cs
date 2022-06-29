@@ -58,13 +58,36 @@ public class GeneratorController : ControllerBase
     [HttpPost, Route("/Generator/RunGateway/{ApplicationName}/{GatewayName}")]
     public IActionResult RunGateway(string ApplicationName, string GatewayName, bool Force)
     {
-        return Ok(ApplicationName);
+        try
+        {
+            return Ok(_logic.RunGateway(ApplicationName, GatewayName, Force));
+        }
+        catch (KnownError e)
+        {
+            return StatusCode(500, e.Message);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex);
+        }
+
     }
 
     [HttpPost, Route("/Generator/RunBackend")]
     public IActionResult RunBackend(string ApplicationName, bool Force)
     {
-        return Ok(ApplicationName);
+        try
+        {
+            return Ok(_logic.RunBackend(ApplicationName, Force));
+        }
+        catch (KnownError e)
+        {
+            return StatusCode(500, e.Message);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex);
+        }
     }
 
     [HttpPost, Route("/Generator/RunFrontends/{ApplicationName}")]
@@ -87,7 +110,18 @@ public class GeneratorController : ControllerBase
     [HttpPost, Route("/Generator/RunEntity/{ApplicationName}/{EntityName}")]
     public IActionResult RunEntity(string ApplicationName, string EntityName, bool Force)
     {
-        return Ok(new { ApplicationName, EntityName });
+        try
+        {
+            return Ok(_logic.RunEntity(ApplicationName, EntityName, Force));
+        }
+        catch (KnownError e)
+        {
+            return StatusCode(500, e.Message);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex);
+        }
     }
 
     [HttpPost, Route("/Generator/RunPages/{ApplicationName}/{FrontendName}")]

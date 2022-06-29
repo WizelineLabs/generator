@@ -15,10 +15,10 @@ public class GeneratorLogic : WriteLogic<Generator>
     public ApplicationLogic ApplicationLogic { get; set; } = null!;
     // public ConflictLogic ConflictLogic { get; set; }
     public WorkspaceGenerator WorkspaceGenerator { get; set; }
-    // public BackendGenerator BackendGenerator { get; set; }
+    public BackendGenerator BackendGenerator { get; set; }
     public FrontendGenerator FrontendGenerator { get; set; } = null!;
-    // public EntityGenerator EntityGenerator { get; set; }
-    // public GatewayGenerator GatewayGenerator { get; set; }
+    public EntityGenerator EntityGenerator { get; set; }
+    public GatewayGenerator GatewayGenerator { get; set; }
     // public ComponentGenerator ComponentGenerator { get; set; } = null!;
     // public PageGenerator PageGenerator { get; set; }
 
@@ -29,7 +29,11 @@ public class GeneratorLogic : WriteLogic<Generator>
                 , ApplicationLogic applicationLogic
                 , FrontendGenerator frontendGenerator
                 , WorkspaceGenerator workspaceGenerator
-                // , ComponentGenerator componentGenerator
+                , BackendGenerator backendGenerator
+                , GatewayGenerator gatewayGenerator
+                , EntityGenerator entityGenerator
+
+    // , ComponentGenerator componentGenerator
     ) : base(DbContext, logger, configuration)
     {
         GIT_USER_NAME = configuration.GetValue<string>("GIT_USERNAME");
@@ -40,6 +44,9 @@ public class GeneratorLogic : WriteLogic<Generator>
         FrontendGenerator = frontendGenerator;
         // ComponentGenerator = componentGenerator;
         WorkspaceGenerator = workspaceGenerator;
+        BackendGenerator = backendGenerator;
+        GatewayGenerator = gatewayGenerator;
+        EntityGenerator = entityGenerator;
     }
 
     public List<Application> GetApplications()
@@ -191,34 +198,34 @@ public class GeneratorLogic : WriteLogic<Generator>
         return UpdateApplicationWorkspace(app, force).ConvertTo<List<ArchiveDTO>>();
     }
 
-    // public List<ArchiveDTO> RunBackend(string? applicationName = null, bool force = false)
-    // {
-    //     if (string.IsNullOrWhiteSpace(applicationName))
-    //     {
-    //         Log.Info($"Run Backend - All Outdated.");
+    public List<ArchiveDTO> RunBackend(string? applicationName = null, bool force = false)
+    {
+        if (string.IsNullOrWhiteSpace(applicationName))
+        {
+            Log.Info($"Run Backend - All Outdated.");
 
-    //         var outdatedApps = ApplicationLogic.GetOutdated();
+            var outdatedApps = ApplicationLogic.GetOutdated();
 
-    //         var files = new List<Archive>();
-    //         foreach (var a in outdatedApps)
-    //             files.AddRange(UpdateApplicationBackend(a, force));
+            var files = new List<ArchiveDTO>();
+            foreach (var a in outdatedApps)
+                files.AddRange(UpdateApplicationBackend(a, force));
 
-    //         return files.ConvertTo<List<ArchiveDTO>>();
-    //     }
+            return files.ConvertTo<List<ArchiveDTO>>();
+        }
 
-    //     Log.Info($"Run Backend for Application: [{applicationName}]");
+        Log.Info($"Run Backend for Application: [{applicationName}]");
 
-    //     var app = ApplicationLogic.GetAll().FirstOrDefault(a => a.Name.ToLower() == applicationName.ToLower());
-    //     if (app == null)
-    //         throw new KnownError($"Application [{applicationName}] does not exist.");
+        var app = ApplicationLogic.GetAll().FirstOrDefault(a => a.Name.ToLower() == applicationName.ToLower());
+        if (app == null)
+            throw new KnownError($"Application [{applicationName}] does not exist.");
 
-    //     ApplicationLogic.AdapterOut(app);
+        ApplicationLogic.AdapterOut(app);
 
-    //     if (app.Definition == null)
-    //         app.Definition = ApplicationLogic.CreateMainDefinition(app);
+        if (app.Definition == null)
+            app.Definition = ApplicationLogic.CreateMainDefinition(app);
 
-    //     return UpdateApplicationBackend(app, force).ConvertTo<List<ArchiveDTO>>();
-    // }
+        return UpdateApplicationBackend(app, force).ConvertTo<List<ArchiveDTO>>();
+    }
 
     public List<ArchiveDTO> RunFrontends(string? applicationName = null, bool force = false)
     {
@@ -286,65 +293,65 @@ public class GeneratorLogic : WriteLogic<Generator>
     //     return ComponentGenerator.Run(force).ConvertTo<List<ArchiveDTO>>();
     // }
 
-    // public List<ArchiveDTO> RunEntity(string entityName, string applicationName, bool force = false)
-    // {
-    //     Log.Info($"Run Entity: [{entityName}] of Application: [{applicationName}]");
+    public List<ArchiveDTO> RunEntity(string applicationName, string entityName, bool force = false)
+    {
+        Log.Info($"Run Entity: [{entityName}] of Application: [{applicationName}]");
 
-    //     var app = ApplicationLogic.GetAll().FirstOrDefault(a => a.Name.ToLower().Trim() == applicationName.ToLower().Trim());
-    //     if (app == null)
-    //         throw new KnownError($"Application [{applicationName}] does not exist.");
+        var app = ApplicationLogic.GetAll().FirstOrDefault(a => a.Name.ToLower().Trim() == applicationName.ToLower().Trim());
+        if (app == null)
+            throw new KnownError($"Application [{applicationName}] does not exist.");
 
-    //     ApplicationLogic.AdapterOut(app);
+        ApplicationLogic.AdapterOut(app);
 
-    //     if (app.Definition == null)
-    //         app.Definition = ApplicationLogic.CreateMainDefinition(app);
+        if (app.Definition == null)
+            app.Definition = ApplicationLogic.CreateMainDefinition(app);
 
-    //     var entity = app.Definition?.Entities.FirstOrDefault(c => c.Name.ToLower().Trim() == entityName.ToLower().Trim());
-    //     if (entity == null)
-    //         throw new KnownError($"Entity [{entityName}] does not exist.");
+        var entity = app.Definition?.Entities.FirstOrDefault(c => c.Name.ToLower().Trim() == entityName.ToLower().Trim());
+        if (entity == null)
+            throw new KnownError($"Entity [{entityName}] does not exist.");
 
-    //     var result = new List<ArchiveDTO>();
+        var result = new List<ArchiveDTO>();
 
-    //     EntityGenerator.SetApplication(app);
-    //     EntityGenerator.Setup(entity);
+        EntityGenerator.SetApplication(app);
+        EntityGenerator.Setup(entity);
 
-    //     result.AddRange(EntityGenerator.Run(force));
-    //     result.Add(EntityGenerator.IoCRegistration(app.Definition));
-    //     result.Add(EntityGenerator.AddToDBContext(app.Definition));
+        result.AddRange(EntityGenerator.Run(force));
+        result.Add(EntityGenerator.IoCRegistration(app.Definition!));
+        result.Add(EntityGenerator.AddToDBContext(app.Definition!));
 
-    //     return result;
-    // }
+        return result;
+    }
 
-    // public List<ArchiveDTO> RunGateway(string gatewayName, string applicationName, bool force = false)
-    // {
-    //     Log.Info($"Run Gateway: [{gatewayName}] of Application: [{applicationName}]");
+    public List<ArchiveDTO> RunGateway(string applicationName, string gatewayName, bool force = false)
+    {
+        Log.Info($"Run Gateway: [{gatewayName}] of Application: [{applicationName}]");
 
-    //     var app = ApplicationLogic.GetAll().FirstOrDefault(a => a.Name.ToLower().Trim() == applicationName.ToLower().Trim());
-    //     if (app == null)
-    //         throw new KnownError($"Application [{applicationName}] does not exist.");
+        var app = ApplicationLogic.GetAll().FirstOrDefault(a => a.Name.ToLower().Trim() == applicationName.ToLower().Trim());
+        if (app == null)
+            throw new KnownError($"Application [{applicationName}] does not exist.");
 
-    //     ApplicationLogic.AdapterOut(app);
+        ApplicationLogic.AdapterOut(app);
 
-    //     if (app.Definition == null)
-    //         app.Definition = ApplicationLogic.CreateMainDefinition(app);
+        if (app.Definition == null)
+            app.Definition = ApplicationLogic.CreateMainDefinition(app);
 
-    //     var gateway = app.Definition?.Gateways.FirstOrDefault(c => c.Name.ToLower().Trim() == gatewayName.ToLower().Trim());
-    //     if (gateway == null)
-    //         throw new KnownError($"Gateway [{gatewayName}] does not exist.");
+        var gateway = app.Definition?.Gateways.FirstOrDefault(c => c.Name!.ToLower().Trim() == gatewayName.ToLower().Trim());
+        if (gateway == null)
+            throw new KnownError($"Gateway [{gatewayName}] does not exist.");
 
-    //     var entity = app.Definition?.Entities.FirstOrDefault(c => c.Name.ToLower().Trim() == gateway.Entity.ToLower().Trim());
-    //     if (entity == null)
-    //         throw new KnownError($"Entity [{gatewayName}] does not exist.");
+        var entity = app.Definition?.Entities.FirstOrDefault(c => c.Name.ToLower().Trim() == gateway.Entity!.ToLower().Trim());
+        if (entity == null)
+            throw new KnownError($"Entity [{gatewayName}] does not exist.");
 
-    //     var result = new List<ArchiveDTO>();
+        var result = new List<ArchiveDTO>();
 
-    //     GatewayGenerator.SetApplication(app);
-    //     GatewayGenerator.Setup(gateway, entity);
+        GatewayGenerator.SetApplication(app);
+        GatewayGenerator.Setup(gateway, entity);
 
-    //     result.AddRange(GatewayGenerator.Run(force));
+        result.AddRange(GatewayGenerator.Run(force));
 
-    //     return result;
-    // }
+        return result;
+    }
 
     // public List<ArchiveDTO> RunComponents(string applicationName, string frontendName, bool force = false)
     // {
@@ -486,20 +493,20 @@ public class GeneratorLogic : WriteLogic<Generator>
         return files;
     }
 
-    // public List<Archive> UpdateApplicationBackend(Application app, bool force = false)
-    // {
-    //     Log.Info($"Update Application Backend: [{app.Name}]");
+    public List<Archive> UpdateApplicationBackend(Application app, bool force = false)
+    {
+        Log.Info($"Update Application Backend: [{app.Name}]");
 
-    //     List<Archive> files = new List<Archive>();
+        List<Archive> files = new List<Archive>();
 
-    //     BackendGenerator.Setup(app);
-    //     files.AddRange(BackendGenerator.Run(force));
+        BackendGenerator.Setup(app);
+        files.AddRange(BackendGenerator.Run(force));
 
-    //     files.AddRange(UpdateApplicationEntities(app, force));
-    //     files.AddRange(UpdateApplicationGateways(app, force));
+        files.AddRange(UpdateApplicationEntities(app, force));
+        files.AddRange(UpdateApplicationGateways(app, force));
 
-    //     return files;
-    // }
+        return files;
+    }
 
     public List<Archive> UpdateApplicationFrontends(Application app, bool force = false)
     {
@@ -521,48 +528,48 @@ public class GeneratorLogic : WriteLogic<Generator>
         return files;
     }
 
-    // public List<Archive> UpdateApplicationEntities(Application app, bool force = false)
-    // {
-    //     Log.Info($"Update Application Entities: [{app.Name}]");
+    public List<Archive> UpdateApplicationEntities(Application app, bool force = false)
+    {
+        Log.Info($"Update Application Entities: [{app.Name}]");
 
-    //     var definition = ApplicationLogic.GetDefinition(app);
-    //     Log.Info($"Application Entities: [{definition.Entities.Select(e => e.Name).Join(", ")}]");
+        var definition = ApplicationLogic.GetDefinition(app);
+        Log.Info($"Application Entities: [{definition.Entities.Select(e => e.Name).Join(", ")}]");
 
-    //     List<Archive> files = new List<Archive>();
+        List<Archive> files = new List<Archive>();
 
-    //     EntityGenerator.SetApplication(app);
-    //     foreach (var entity in definition.Entities)
-    //     {
-    //         EntityGenerator.Setup(entity);
-    //         files.AddRange(EntityGenerator.Run(force));
-    //     }
+        EntityGenerator.SetApplication(app);
+        foreach (var entity in definition.Entities)
+        {
+            EntityGenerator.Setup(entity);
+            files.AddRange(EntityGenerator.Run(force));
+        }
 
-    //     EntityGenerator.IoCRegistration(definition);
-    //     EntityGenerator.AddToDBContext(definition);
+        EntityGenerator.IoCRegistration(definition);
+        EntityGenerator.AddToDBContext(definition);
 
-    //     return files;
-    // }
+        return files;
+    }
 
-    // public List<Archive> UpdateApplicationGateways(Application app, bool force = false)
-    // {
-    //     Log.Info($"Update Application Gateways: [{app.Name}]");
+    public List<Archive> UpdateApplicationGateways(Application app, bool force = false)
+    {
+        Log.Info($"Update Application Gateways: [{app.Name}]");
 
-    //     var definition = ApplicationLogic.GetDefinition(app);
-    //     Log.Info($"Application Gateways: [{definition.Gateways.Select(e => e.Name).Join(", ")}]");
+        var definition = ApplicationLogic.GetDefinition(app);
+        Log.Info($"Application Gateways: [{definition.Gateways.Select(e => e.Name).Join(", ")}]");
 
-    //     List<Archive> files = new List<Archive>();
+        List<Archive> files = new List<Archive>();
 
-    //     GatewayGenerator.SetApplication(app);
-    //     foreach (var gateway in definition.Gateways)
-    //     {
-    //         var entity = definition.Entities.FirstOrDefault(e => e.Name.ToLower().Trim() == gateway.Entity.ToLower().Trim());
-    //         if (entity == null) throw new KnownError($"Entity: {gateway.Entity} does not exist.");
-    //         GatewayGenerator.Setup(gateway, entity);
-    //         files.AddRange(GatewayGenerator.Run(force));
-    //     }
+        GatewayGenerator.SetApplication(app);
+        foreach (var gateway in definition.Gateways)
+        {
+            var entity = definition.Entities.FirstOrDefault(e => e.Name.ToLower().Trim() == gateway.Entity.ToLower().Trim());
+            if (entity == null) throw new KnownError($"Entity: {gateway.Entity} does not exist.");
+            GatewayGenerator.Setup(gateway, entity);
+            files.AddRange(GatewayGenerator.Run(force));
+        }
 
-    //     return files;
-    // }
+        return files;
+    }
 
     // public List<Archive> UpdateFrontendComponents(Application app, Frontend frontend, bool force = false)
     // {

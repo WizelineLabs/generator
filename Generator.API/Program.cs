@@ -29,6 +29,9 @@ builder.Services.AddScoped<GeneratorLogic>();
 #endregion
 
 #region Generators
+builder.Services.AddScoped<GatewayGenerator>();
+builder.Services.AddScoped<EntityGenerator>();
+builder.Services.AddScoped<BackendGenerator>();
 builder.Services.AddScoped<WorkspaceGenerator>();
 builder.Services.AddScoped<FrontendGenerator>();
 #endregion
