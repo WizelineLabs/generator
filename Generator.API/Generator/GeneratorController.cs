@@ -38,10 +38,21 @@ public class GeneratorController : ControllerBase
         }
     }
 
-    [HttpPost, Route("/Generator/RunWorkspace")]
+    [HttpPost, Route("/Generator/RunWorkspace/{ApplicationName}")]
     public IActionResult RunWorkspace(string ApplicationName, bool Force)
     {
-        return Ok(ApplicationName);
+        try
+        {
+            return Ok(_logic.RunWorkspace(ApplicationName, Force));
+        }
+        catch (KnownError e)
+        {
+            return StatusCode(500, e.Message);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex);
+        }
     }
 
     [HttpPost, Route("/Generator/RunGateway/{ApplicationName}/{GatewayName}")]

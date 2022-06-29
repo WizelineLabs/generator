@@ -14,7 +14,7 @@ public class GeneratorLogic : WriteLogic<Generator>
 
     public ApplicationLogic ApplicationLogic { get; set; } = null!;
     // public ConflictLogic ConflictLogic { get; set; }
-    // public WorkspaceGenerator WorkspaceGenerator { get; set; }
+    public WorkspaceGenerator WorkspaceGenerator { get; set; }
     // public BackendGenerator BackendGenerator { get; set; }
     public FrontendGenerator FrontendGenerator { get; set; } = null!;
     // public EntityGenerator EntityGenerator { get; set; }
@@ -28,6 +28,7 @@ public class GeneratorLogic : WriteLogic<Generator>
                 , IConfiguration configuration
                 , ApplicationLogic applicationLogic
                 , FrontendGenerator frontendGenerator
+                , WorkspaceGenerator workspaceGenerator
                 // , ComponentGenerator componentGenerator
     ) : base(DbContext, logger, configuration)
     {
@@ -38,6 +39,7 @@ public class GeneratorLogic : WriteLogic<Generator>
         ApplicationLogic = applicationLogic;
         FrontendGenerator = frontendGenerator;
         // ComponentGenerator = componentGenerator;
+        WorkspaceGenerator = workspaceGenerator;
     }
 
     public List<Application> GetApplications()
@@ -160,34 +162,34 @@ public class GeneratorLogic : WriteLogic<Generator>
         return files.ConvertTo<List<ArchiveDTO>>();
     }
 
-    // public List<ArchiveDTO> RunWorkspace(string? applicationName = null, bool force = false)
-    // {
-    //     if (string.IsNullOrWhiteSpace(applicationName))
-    //     {
-    //         Log.Info($"Run Workspace - All Outdated.");
+    public List<ArchiveDTO> RunWorkspace(string? applicationName = null, bool force = false)
+    {
+        if (string.IsNullOrWhiteSpace(applicationName))
+        {
+            Log.Info($"Run Workspace - All Outdated.");
 
-    //         var outdatedApps = ApplicationLogic.GetOutdated();
+            var outdatedApps = ApplicationLogic.GetOutdated();
 
-    //         var files = new List<Archive>();
-    //         foreach (var a in outdatedApps)
-    //             files.AddRange(UpdateApplicationWorkspace(a, force));
+            var files = new List<Archive>();
+            foreach (var a in outdatedApps)
+                files.AddRange(UpdateApplicationWorkspace(a, force));
 
-    //         return files.ConvertTo<List<ArchiveDTO>>();
-    //     }
+            return files.ConvertTo<List<ArchiveDTO>>();
+        }
 
-    //     Log.Info($"Run Workspace for Application: [{applicationName}]");
+        Log.Info($"Run Workspace for Application: [{applicationName}]");
 
-    //     var app = ApplicationLogic.GetAll().FirstOrDefault(a => a.Name.ToLower() == applicationName.ToLower());
-    //     if (app == null)
-    //         throw new KnownError($"Application [{applicationName}] does not exist.");
+        var app = ApplicationLogic.GetAll().FirstOrDefault(a => a.Name.ToLower() == applicationName.ToLower());
+        if (app == null)
+            throw new KnownError($"Application [{applicationName}] does not exist.");
 
-    //     ApplicationLogic.AdapterOut(app);
+        ApplicationLogic.AdapterOut(app);
 
-    //     if (app.Definition == null)
-    //         app.Definition = ApplicationLogic.CreateMainDefinition(app);
+        if (app.Definition == null)
+            app.Definition = ApplicationLogic.CreateMainDefinition(app);
 
-    //     return UpdateApplicationWorkspace(app, force).ConvertTo<List<ArchiveDTO>>();
-    // }
+        return UpdateApplicationWorkspace(app, force).ConvertTo<List<ArchiveDTO>>();
+    }
 
     // public List<ArchiveDTO> RunBackend(string? applicationName = null, bool force = false)
     // {
@@ -472,17 +474,17 @@ public class GeneratorLogic : WriteLogic<Generator>
     //     }
     // }
 
-    // public List<Archive> UpdateApplicationWorkspace(Application app, bool force = false)
-    // {
-    //     Log.Info($"Update Application Workspace: [{app.Name}]");
+    public List<Archive> UpdateApplicationWorkspace(Application app, bool force = false)
+    {
+        Log.Info($"Update Application Workspace: [{app.Name}]");
 
-    //     List<Archive> files = new List<Archive>();
+        List<Archive> files = new List<Archive>();
 
-    //     WorkspaceGenerator.Setup(app);
-    //     files.AddRange(WorkspaceGenerator.Run(force));
+        WorkspaceGenerator.Setup(app);
+        files.AddRange(WorkspaceGenerator.Run(force));
 
-    //     return files;
-    // }
+        return files;
+    }
 
     // public List<Archive> UpdateApplicationBackend(Application app, bool force = false)
     // {
