@@ -1,0 +1,40 @@
+version: "3.1"
+
+services:
+  generator:
+    container_name: generator
+    image: ghcr.io/wizeline/generator:release
+    restart: always
+    ports:
+      - 4321:80
+
+  db:
+    container_name: postgres
+    image: postgres:14-alpine
+    restart: always
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres-generator:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: root
+      POSTGRES_USER: postgres
+
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4:6.7
+    restart: always
+    ports:
+      - 7777:80
+    environment:
+      PGADMIN_DEFAULT_EMAIL: alfredo.pacheco@wizeline.com
+      PGADMIN_DEFAULT_PASSWORD: root
+    volumes:
+      - ./pgadmin/:/var/lib/pgadmin/storage
+
+volumes:
+  postgres-generator:
+
+networks:
+  default:
+    name: generator-net
