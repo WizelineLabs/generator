@@ -16,7 +16,7 @@ FROM mcr.microsoft.com/dotnet/sdk:6.0-bullseye-slim AS build
 WORKDIR /src
 COPY *.sln .
 COPY Generator.API/*.csproj ./Generator.API/
-# COPY Reusable/*.csproj ./Reusable/
+COPY Reusable/*.csproj ./Reusable/
 RUN dotnet restore
 COPY . .
 WORKDIR "/src/Generator.API/."
