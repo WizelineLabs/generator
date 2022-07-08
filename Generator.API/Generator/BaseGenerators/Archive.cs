@@ -8,7 +8,12 @@ public class Archive : ArchiveDTO
     {
 
     }
-    public Archive(string projectName, string fileType, string frontendName, string relativePath, string fileName, ArchiveComparisionResult ComparisionResult)
+    public Archive(string projectName,
+        string fileType,
+        string? frontendName,
+        string relativePath,
+        string fileName,
+        ArchiveComparisionResult ComparisionResult)
     {
         ProjectName = projectName;
         FileType = fileType;

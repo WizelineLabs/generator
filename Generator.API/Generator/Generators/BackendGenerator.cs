@@ -1,4 +1,4 @@
-﻿using Generator.API.BaseGenerators;
+using Generator.API.BaseGenerators;
 using Reusable.CRUD.JsonEntities;
 
 namespace Generator.API.Generators
@@ -8,8 +8,6 @@ namespace Generator.API.Generators
         public BackendGenerator(GeneratorContext DbContext, ILog logger, IConfiguration configuration) : base(DbContext, logger, configuration)
         {
         }
-        public override string SOURCE_DIRECTORY { get; set; } = "";
-        public override string TARGET_DIRECTORY { get; set; } = "";
         public override string GeneratorName => "Backend";
 
         public void Setup(Application app)

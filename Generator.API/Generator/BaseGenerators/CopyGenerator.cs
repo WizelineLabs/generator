@@ -127,8 +127,8 @@ public abstract class CopyGenerator : BaseGenerator, IGenerator
             var model = new SideBySideDiffBuilder(new Differ()).BuildDiffModel(generatorFileContent, appFileContent, false)
                 .ConvertTo<Diff>();
 
-            if (model.OldText.Lines.All(l => l.Type == ChangeType.Unchanged))
-                if (model.NewText.Lines.All(l => l.Type == ChangeType.Unchanged))
+            if (model.OldText!.Lines!.All(l => l.Type == ChangeType.Unchanged))
+                if (model.NewText!.Lines!.All(l => l.Type == ChangeType.Unchanged))
                 {
                     f.ComparisionResult.Add(ArchiveComparisionResult.Identical);
                     Log.Info($"Compare File: [{f.FileName}], Identical.");
