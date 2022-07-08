@@ -7,8 +7,8 @@ namespace Generator.API.BaseGenerators;
 
 public abstract class CopyGenerator : BaseGenerator, IGenerator
 {
-    public abstract string SOURCE_DIRECTORY { get; set; }
-    public abstract string TARGET_DIRECTORY { get; set; }
+    public string SOURCE_DIRECTORY { get; set; } = "";
+    public string TARGET_DIRECTORY { get; set; } = "";
 
     protected CopyGenerator(DbContext DbContext, ILog logger, IConfiguration configuration) : base(DbContext, logger, configuration)
     {

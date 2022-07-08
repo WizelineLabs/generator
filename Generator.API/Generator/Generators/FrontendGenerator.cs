@@ -9,9 +9,6 @@ public class FrontendGenerator : CopyGenerator
     public override string GeneratorName => "Frontend";
     public FrontendDefinition? Frontend { get; set; }
 
-    public override string SOURCE_DIRECTORY { get; set; } = "";
-    public override string TARGET_DIRECTORY { get; set; } = "";
-
     public FrontendGenerator(GeneratorContext DbContext, ILog logger, IConfiguration configuration) : base(DbContext, logger, configuration)
     {
         FORMAT_PROGRAM = configuration.GetValue<string>("FRONTEND_FORMAT");

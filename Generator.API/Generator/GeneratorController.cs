@@ -38,7 +38,7 @@ public class GeneratorController : ControllerBase
         }
     }
 
-    [HttpPost, Route("/Generator/RunWorkspace")]
+    [HttpPost, Route("/Generator/RunWorkspace/{ApplicationName}")]
     public IActionResult RunWorkspace(string ApplicationName, bool Force)
     {
         try
