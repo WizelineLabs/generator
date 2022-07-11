@@ -1,8 +1,5 @@
-using Reusable.CRUD.JsonEntities;
-using YamlDotNet.Serialization;
-using YamlDotNet.Serialization.NamingConventions;
 using Generator.API.Constants;
-using Generator.API.Generators;
+using Reusable.CRUD.JsonEntities;
 
 namespace Generator.API;
 
@@ -52,11 +49,11 @@ public class ApplicationLogic : WriteLogic<Application>, ILogicWriteAsync<Applic
 
         if (File.Exists(mainPath))
         {
-            mainDefinition = DeserializeYAML<MainDefinition>(mainPath);
+            mainDefinition = YAML.DeserializeYAML<MainDefinition>(mainPath);
             mainDefinition.Frontends = getConfigurationFromFolder<FrontendDefinition>(frontendsPath, new FrontendGenerator((DbContext as GeneratorContext)!, Log, Configuration).Parse);
-            mainDefinition.Entities = getConfigurationFromFolder<EntityDefinition>(entitiesPath, new EntityGenerator().Parse);
+            mainDefinition.Entities = getConfigurationFromFolder<EntityDefinition>(entitiesPath, new EntityGenerator((DbContext as GeneratorContext)!, Log, Configuration).Parse);
             mainDefinition.Components = getConfigurationFromFolder<ComponentDefinition>(componentsPath, new ComponentGenerator().Parse);
-            mainDefinition.Gateways = getConfigurationFromFolder<GatewayDefinition>(dtosPath, new GatewayGenerator().Parse);
+            mainDefinition.Gateways = getConfigurationFromFolder<GatewayDefinition>(dtosPath, new GatewayGenerator((DbContext as GeneratorContext)!, Log, Configuration).Parse);
         }
 
         return mainDefinition!;
@@ -91,7 +88,7 @@ public class ApplicationLogic : WriteLogic<Application>, ILogicWriteAsync<Applic
             );
         }
 
-        File.WriteAllText(mainPath, ParseYML(mainDefinition));
+        File.WriteAllText(mainPath, YAML.ParseYML(mainDefinition));
         Log.Info($"Main YAML file written to path: [{mainPath}]");
 
         return mainDefinition;
@@ -158,7 +155,7 @@ public class ApplicationLogic : WriteLogic<Application>, ILogicWriteAsync<Applic
 
         var path = APPLICATIONS_DIR.CombineWith(app.Name!, $"definition/frontends/{frontendName}.yml");
 
-        File.WriteAllText(path, ParseYML(frontend));
+        File.WriteAllText(path, YAML.ParseYML(frontend));
         Log.Info($"Page YAML file written: [{path}]");
 
         //Cache!.FlushAll();
@@ -221,7 +218,7 @@ public class ApplicationLogic : WriteLogic<Application>, ILogicWriteAsync<Applic
         if (!fileInfo.Directory!.Exists)
             fileInfo.Directory.Create();
 
-        File.WriteAllText(path, ParseYML(item));
+        File.WriteAllText(path, YAML.ParseYML(item));
         Log.Info($"YAML file written: [{path}]");
 
         return GetById(app.Id)!;
@@ -235,43 +232,16 @@ public class ApplicationLogic : WriteLogic<Application>, ILogicWriteAsync<Applic
             string[] fileEntries = Directory.GetFiles(path, "*.yml");
             foreach (string file in fileEntries)
             {
-                T toAdd = fromYAML(DeserializeYAML<T>(file));
+                T toAdd = fromYAML(YAML.DeserializeYAML<T>(file));
                 results.Add(toAdd);
             }
         }
         return results;
     }
 
-    private T DeserializeYAML<T>(string yamlName)
-    {
-        using (StreamReader sr = new StreamReader(yamlName))
-        {
-            var content = sr.ReadToEnd();
-            var input = new StringReader(content);
-            var deserializer = new DeserializerBuilder()
-                .WithNamingConvention(CamelCaseNamingConvention.Instance).Build();
-            return deserializer.Deserialize<T>(input);
-        }
-    }
 
-    private string ToYaml(object from)
-    {
-        var serializer = new SerializerBuilder()
-            .WithNamingConvention(CamelCaseNamingConvention.Instance)
-            .Build();
 
-        return serializer.Serialize(from);
-    }
 
-    private string ParseYML(object from)
-    {
-        string yaml = ToYaml(from);
-        var lines = yaml.Split(new char[] { '\n' })
-            .Where(x => !x.StartsWith("entryState:"))
-            .ToList();
-
-        return string.Join('\n', lines);
-    }
 
 
 
