@@ -26,9 +26,13 @@ builder.Services.AddScoped<ILog, Log<Generator.API.Generator>>();
 #region Logic
 builder.Services.AddScoped<ApplicationLogic>();
 builder.Services.AddScoped<GeneratorLogic>();
+builder.Services.AddScoped<ConflictLogic>();
 #endregion
 
 #region Generators
+builder.Services.AddScoped<GatewayGenerator>();
+builder.Services.AddScoped<EntityGenerator>();
+builder.Services.AddScoped<BackendGenerator>();
 builder.Services.AddScoped<WorkspaceGenerator>();
 builder.Services.AddScoped<FrontendGenerator>();
 #endregion
