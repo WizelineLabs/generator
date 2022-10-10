@@ -51,7 +51,7 @@ public class ApplicationLogic : WriteLogic<Application>, ILogicWriteAsync<Applic
         {
             mainDefinition = YAML.DeserializeYAML<MainDefinition>(mainPath);
             mainDefinition.Frontends = getConfigurationFromFolder<FrontendDefinition>(frontendsPath, new FrontendGenerator((DbContext as GeneratorContext)!, Log, Configuration).Parse);
-            mainDefinition.Entities = getConfigurationFromFolder<EntityDefinition>(entitiesPath, new EntityGenerator((DbContext as GeneratorContext)!, Log, Configuration).Parse);
+            // mainDefinition.Entities = getConfigurationFromFolder<EntityDefinition>(entitiesPath, new EntityGenerator((DbContext as GeneratorContext)!, Log, Configuration).Parse);
             mainDefinition.Components = getConfigurationFromFolder<ComponentDefinition>(componentsPath, new ComponentGenerator().Parse);
             mainDefinition.Gateways = getConfigurationFromFolder<GatewayDefinition>(dtosPath, new GatewayGenerator((DbContext as GeneratorContext)!, Log, Configuration).Parse);
         }
