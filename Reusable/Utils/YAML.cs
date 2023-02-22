@@ -21,8 +21,8 @@ namespace Reusable.Utils
         {
             var serializer = new SerializerBuilder()
                 .WithNamingConvention(CamelCaseNamingConvention.Instance)
+                .WithTypeInspector(x => new SortedTypeInspector(x))
                 .Build();
-
             return serializer.Serialize(from);
         }
 
@@ -35,6 +35,5 @@ namespace Reusable.Utils
 
             return string.Join('\n', lines);
         }
-
     }
 }
